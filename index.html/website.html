@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TechForge Academy</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0a1d37',
+            accent: '#00ff88',
+            dark: '#0f172a',
+            ai: '#00d1ff',
+            cyber: '#ff6b6b',
+            fullstack: '#9b59b6',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-15px)' }
+            },
+            pulseGlow: {
+              '0%,100%': { boxShadow: '0 0 20px rgba(0,255,136,0.6)' },
+              '50%': { boxShadow: '0 0 40px rgba(0,255,136,1)' }
+            },
+            fadeUp: {
+              '0%': { opacity: 0, transform: 'translateY(30px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' }
+            }
+          },
+          animation: {
+            float: 'float 3s ease-in-out infinite',
+            pulseGlow: 'pulseGlow 2s infinite',
+            fadeUp: 'fadeUp 1s ease forwards'
+          }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .glass {
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #00ff88, #00d1ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .btn-glow:hover {
+      animation: pulseGlow 1.5s infinite;
+      transform: scale(1.05);
+    }
+
+    .program-card,
+    .facility-card,
+    .faculty-card {
+      transition: all .4s ease;
+    }
+
+    .program-card:hover,
+    .facility-card:hover,
+    .faculty-card:hover {
+      transform: translateY(-15px) scale(1.05) rotate(-1deg);
+      box-shadow: 0 35px 60px rgba(0, 255, 136, 0.3);
+    }
+
+    .program-card i {
+      transition: transform .4s ease;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .program-card:hover i {
+      transform: scale(1.3) rotate(-10deg);
+    }
+
+    .fade-up {
+      animation: fadeUp 1s ease forwards;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 255, 136, .4);
+    }
+
+    #explore-btn {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* Enhanced Responsive Styles */
+    @media (max-width: 640px) {
+
+      .program-card:hover,
+      .facility-card:hover,
+      .faculty-card:hover {
+        transform: translateY(-8px) scale(1.02);
+      }
+    }
+
+    /* Ripple Animation */
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      section {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-dark via-primary to-dark text-white">
+
+  <!-- ================= NAV ================= -->
+  <nav class="fixed top-0 w-full z-50 glass">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <span class="text-2xl font-bold gradient-text">TechForge</span>
+
+      <div class="hidden md:flex gap-8 font-medium">
+        <a href="#home" class="hover:text-accent transition">Home</a>
+        <a href="#about" class="hover:text-accent transition">About</a>
+        <a href="#programs" class="hover:text-accent transition">Programs</a>
+        <a href="#campus" class="hover:text-accent transition">Campus</a>
+        <a href="#contact" class="hover:text-accent transition">Contact</a>
+      </div>
+
+      <button id="mobile-btn" class="md:hidden">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="hidden glass px-6 py-4 space-y-3">
+      <a href="#home" class="block">Home</a>
+      <a href="#about" class="block">About</a>
+      <a href="#programs" class="block">Programs</a>
+      <a href="#campus" class="block">Campus</a>
+      <a href="#contact" class="block">Contact</a>
+    </div>
+  </nav>
+
+  <!-- ================= HERO ================= -->
+  <section id="home" class="h-screen flex items-center justify-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-black/50"></div>
+
+    <!-- Floating Blobs -->
+    <div
+      class="absolute w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 bg-accent/20 blur-3xl rounded-full top-10 sm:top-20 left-5 sm:left-20 animate-float">
+    </div>
+    <div
+      class="absolute w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-ai/20 blur-3xl rounded-full bottom-10 sm:bottom-20 right-5 sm:right-20 animate-float">
+    </div>
+
+    <div class="relative z-10 text-center px-4 sm:px-6 fade-up">
+      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6">
+        Forge Your <span class="gradient-text">Future</span><br>in Tech
+      </h1>
+      <p class="text-base sm:text-lg md:text-xl text-gray-200 mb-6 sm:mb-8 md:mb-10 px-2">
+        6 Elite Programs • Job Guaranteed • Industry Mentors
+      </p>
+      <button id="explore-btn"
+        class="bg-accent text-dark px-6 sm:px-8 md:px-10 py-3 sm:py-4 rounded-full font-bold btn-glow transition text-sm sm:text-base">
+        Explore Programs
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT ================= -->
+  <section id="about" class="py-12 sm:py-16 md:py-24 px-4 sm:px-6">
+    <div class="max-w-6xl mx-auto text-center fade-up">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text mb-6 sm:mb-8 md:mb-12">About Us</h2>
+      <p class="text-base sm:text-lg text-gray-300 leading-relaxed">
+        TechForge Academy empowers future engineers through hands-on learning,
+        real industry projects, and guaranteed career pathways.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= PROGRAMS ================= -->
+  <section id="programs" class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 bg-dark/40">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-center gradient-text mb-8 sm:mb-12 md:mb-16 fade-up">
+        Programs</h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
+        <div class="program-card glass p-6 sm:p-8 rounded-3xl fade-up">
+          <i class="fas fa-brain text-4xl sm:text-5xl text-ai mb-4"></i>
+          <h3 class="text-xl sm:text-2xl font-bold mb-2">Artificial Intelligence</h3>
+          <p class="opacity-80 mb-4 sm:mb-6 text-sm sm:text-base">Deep Learning • Research • Capstone</p>
+          <button onclick="openEnroll('AI')"
+            class="bg-ai w-full py-2.5 sm:py-3 rounded-full font-bold btn-glow text-sm sm:text-base">
+            Apply Now
+          </button>
+        </div>
+
+        <div class="program-card glass p-6 sm:p-8 rounded-3xl fade-up">
+          <i class="fas fa-shield-alt text-4xl sm:text-5xl text-cyber mb-4"></i>
+          <h3 class="text-xl sm:text-2xl font-bold mb-2">Cybersecurity</h3>
+          <p class="opacity-80 mb-4 sm:mb-6 text-sm sm:text-base">Ethical Hacking • SOC • Certifications</p>
+          <button onclick="openEnroll('Cybersecurity')"
+            class="bg-cyber w-full py-2.5 sm:py-3 rounded-full font-bold btn-glow text-sm sm:text-base">
+            Apply Now
+          </button>
+        </div>
+
+        <div class="program-card glass p-6 sm:p-8 rounded-3xl fade-up sm:col-span-2 lg:col-span-1">
+          <i class="fas fa-code text-4xl sm:text-5xl text-fullstack mb-4"></i>
+          <h3 class="text-xl sm:text-2xl font-bold mb-2">Full-Stack Web</h3>
+          <p class="opacity-80 mb-4 sm:mb-6 text-sm sm:text-base">React • Node • AWS</p>
+          <button onclick="openEnroll('Full-Stack')"
+            class="bg-fullstack w-full py-2.5 sm:py-3 rounded-full font-bold btn-glow text-sm sm:text-base">
+            Apply Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CAMPUS ================= -->
+  <section id="campus" class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 fade-up">
+    <div class="max-w-6xl mx-auto text-center">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text mb-8 sm:mb-12 md:mb-16">Campus Life</h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+        <div class="facility-card glass p-6 sm:p-8 rounded-2xl animate-float">
+          <i class="fas fa-microchip text-4xl sm:text-5xl text-accent mb-3 sm:mb-4"></i>
+          <h3 class="font-bold text-lg sm:text-xl">AI Labs</h3>
+        </div>
+        <div class="facility-card glass p-6 sm:p-8 rounded-2xl animate-float">
+          <i class="fas fa-dumbbell text-4xl sm:text-5xl text-accent mb-3 sm:mb-4"></i>
+          <h3 class="font-bold text-lg sm:text-xl">Wellness Center</h3>
+        </div>
+        <div class="facility-card glass p-6 sm:p-8 rounded-2xl animate-float sm:col-span-2 md:col-span-1">
+          <i class="fas fa-utensils text-4xl sm:text-5xl text-accent mb-3 sm:mb-4"></i>
+          <h3 class="font-bold text-lg sm:text-xl">Cafeteria</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section id="contact" class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 bg-dark/40 fade-up">
+    <div class="max-w-xl mx-auto glass p-5 sm:p-8 rounded-2xl">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-4 sm:mb-6 text-center">Contact Us</h2>
+
+      <form class="space-y-3 sm:space-y-4">
+        <input type="text" placeholder="Name"
+          class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-white/10 text-sm sm:text-base">
+        <input type="email" placeholder="Email"
+          class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-white/10 text-sm sm:text-base">
+        <textarea rows="4" placeholder="Message"
+          class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-white/10 text-sm sm:text-base"></textarea>
+        <button class="w-full bg-accent text-dark py-2.5 sm:py-3 rounded-full font-bold btn-glow text-sm sm:text-base">
+          Send Message
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================= MODAL ================= -->
+  <div id="enroll-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 p-4">
+    <div class="glass p-5 sm:p-8 rounded-3xl max-w-md w-full animate-fadeUp mx-4">
+      <h3 class="text-xl sm:text-2xl font-bold mb-4">
+        Apply to <span id="program-name" class="gradient-text"></span>
+      </h3>
+      <button onclick="closeEnroll()"
+        class="mt-4 sm:mt-6 w-full bg-accent text-dark py-2.5 sm:py-3 rounded-full font-bold text-sm sm:text-base">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Mobile Menu Toggle with Animation
+    const mobileBtn = document.getElementById('mobile-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    let menuOpen = false;
+
+    mobileBtn.onclick = () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('hidden');
+      mobileBtn.innerHTML = menuOpen
+        ? '<i class="fas fa-times text-xl"></i>'
+        : '<i class="fas fa-bars text-xl"></i>';
+    };
+
+    // Close mobile menu when clicking a link
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        menuOpen = false;
+        mobileBtn.innerHTML = '<i class="fas fa-bars text-xl"></i>';
+      });
+    });
+
+    // Modal Functions
+    const modal = document.getElementById('enroll-modal');
+    const programName = document.getElementById('program-name');
+
+    function openEnroll(name) {
+      programName.textContent = name;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeEnroll() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = 'auto';
+    }
+
+    // Close modal on backdrop click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeEnroll();
+    });
+
+    // Escape key closes modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeEnroll();
+    });
+
+    // Scroll-triggered Animations with Intersection Observer
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const animateOnScroll = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // Apply scroll animations to cards
+    document.querySelectorAll('.program-card, .facility-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      animateOnScroll.observe(el);
+    });
+
+    // Navbar background on scroll
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.style.background = 'rgba(15, 23, 42, 0.95)';
+        nav.style.boxShadow = '0 4px 30px rgba(0,0,0,0.3)';
+      } else {
+        nav.style.background = 'rgba(255,255,255,0.08)';
+        nav.style.boxShadow = 'none';
+      }
+    });
+
+    // Smooth scroll for explore button
+    document.getElementById('explore-btn').addEventListener('click', () => {
+      document.getElementById('programs').scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+
+    // Add ripple effect to buttons
+    document.querySelectorAll('button').forEach(button => {
+      button.addEventListener('click', function (e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+
+        ripple.style.cssText = `
+          position: absolute;
+          width: ${size}px;
+          height: ${size}px;
+          left: ${x}px;
+          top: ${y}px;
+          background: rgba(255,255,255,0.3);
+          border-radius: 50%;
+          transform: scale(0);
+          animation: ripple 0.6s ease-out;
+          pointer-events: none;
+        `;
+
+        this.style.position = 'relative';
+        this.style.overflow = 'hidden';
+        this.appendChild(ripple);
+
+        setTimeout(() => ripple.remove(), 600);
+      });
+    });
+
+    // Parallax effect on floating blobs
+    document.addEventListener('mousemove', (e) => {
+      const blobs = document.querySelectorAll('#home .animate-float');
+      const x = (e.clientX / window.innerWidth - 0.5) * 30;
+      const y = (e.clientY / window.innerHeight - 0.5) * 30;
+
+      blobs.forEach((blob, i) => {
+        const speed = (i + 1) * 0.5;
+        blob.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+      });
+    });
+
+    // Active nav link highlight on scroll
+    const sections = document.querySelectorAll('section[id]');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (scrollY >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      document.querySelectorAll('nav a[href^="#"]').forEach(link => {
+        link.classList.remove('text-accent');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('text-accent');
+        }
+      });
+    });
+
+    // Form submission with feedback
+    document.querySelector('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      const originalText = btn.textContent;
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.textContent = 'Message Sent! ✓';
+        btn.style.background = '#10b981';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = '';
+          btn.disabled = false;
+          e.target.reset();
+        }, 2000);
+      }, 1000);
+    });
+  </script>
+
+</body>
+
+</html>
