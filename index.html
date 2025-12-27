@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TechForge Academy</title>
 
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -15,10 +14,13 @@
           colors: {
             primary: '#0a1d37',
             accent: '#00ff88',
-            dark: '#0f172a',
+            dark: '#050b18',
             ai: '#00d1ff',
             cyber: '#ff6b6b',
             fullstack: '#9b59b6',
+            data: '#f1c40f',
+            cloud: '#3498db',
+            software: '#e67e22',
           },
           fontFamily: {
             sans: ['Inter', 'system-ui', 'sans-serif']
@@ -26,21 +28,27 @@
           keyframes: {
             float: {
               '0%, 100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-15px)' }
+              '50%': { transform: 'translateY(-20px)' }
             },
-            pulseGlow: {
-              '0%,100%': { boxShadow: '0 0 20px rgba(0,255,136,0.6)' },
-              '50%': { boxShadow: '0 0 40px rgba(0,255,136,1)' }
+            floatText: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' }
             },
-            fadeUp: {
-              '0%': { opacity: 0, transform: 'translateY(30px)' },
-              '100%': { opacity: 1, transform: 'translateY(0)' }
+            mesh: {
+              '0%': { transform: 'translate(0%, 0%) scale(1)' },
+              '33%': { transform: 'translate(10%, 15%) scale(1.2)' },
+              '66%': { transform: 'translate(-15%, 5%) scale(0.9)' },
+              '100%': { transform: 'translate(0%, 0%) scale(1)' },
+            },
+            mirrorSplash: {
+              '0%': { transform: 'scale(1)', opacity: '1', boxShadow: '0 0 0 0 rgba(255, 255, 255, 0.4)' },
+              '100%': { transform: 'scale(1.5)', opacity: '0', boxShadow: '0 0 50px 100px rgba(255, 255, 255, 0)' }
             }
           },
           animation: {
-            float: 'float 3s ease-in-out infinite',
-            pulseGlow: 'pulseGlow 2s infinite',
-            fadeUp: 'fadeUp 1s ease forwards'
+            float: 'float 6s ease-in-out infinite',
+            floatText: 'floatText 4s ease-in-out infinite',
+            mesh: 'mesh 15s ease-in-out infinite',
           }
         }
       }
@@ -51,426 +59,474 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
-    html {
-      scroll-behavior: smooth;
+    html { scroll-behavior: smooth; }
+    
+    .mesh-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: #050b18;
+      z-index: -2;
+      overflow: hidden;
     }
 
-    .glass {
-      backdrop-filter: blur(14px);
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+    .mesh-blob {
+      position: absolute;
+      width: 600px; height: 600px;
+      filter: blur(100px);
+      opacity: 0.35;
+      border-radius: 50%;
+      pointer-events: none;
     }
 
-    .gradient-text {
-      background: linear-gradient(to right, #00ff88, #00d1ff);
+    .glass { 
+      backdrop-filter: blur(20px); 
+      background: rgba(255, 255, 255, 0.05); 
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+
+    .gradient-text { 
+      background: linear-gradient(135deg, #00ff88, #00d1ff, #9b59b6);
+      background-size: 200% 200%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      animation: mesh 5s ease infinite;
     }
 
-    .btn-glow:hover {
-      animation: pulseGlow 1.5s infinite;
-      transform: scale(1.05);
+    .floating-text-slow { animation: floatText 5s ease-in-out infinite; }
+    
+    .program-card {
+      position: relative;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      overflow: hidden;
     }
 
-    .program-card,
-    .facility-card,
-    .faculty-card {
-      transition: all .4s ease;
+    /* Mirror Shine effect */
+    .program-card::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+      transform: translateX(-150%) skewX(-25deg);
+      transition: 0.7s;
     }
 
-    .program-card:hover,
-    .facility-card:hover,
-    .faculty-card:hover {
-      transform: translateY(-15px) scale(1.05) rotate(-1deg);
-      box-shadow: 0 35px 60px rgba(0, 255, 136, 0.3);
+    .program-card:hover::after {
+      transform: translateX(150%) skewX(-25deg);
     }
 
-    .program-card i {
-      transition: transform .4s ease;
-      animation: float 3s ease-in-out infinite;
+    .program-card:hover { 
+      transform: translateY(-20px) scale(1.05);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.5);
     }
 
-    .program-card:hover i {
-      transform: scale(1.3) rotate(-10deg);
+    .splash-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 10px; height: 10px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      display: none;
     }
 
-    .fade-up {
-      animation: fadeUp 1s ease forwards;
+    .clicked .splash-ring {
+      display: block;
+      animation: mirrorSplash 0.8s ease-out forwards;
     }
 
-    input:focus,
-    textarea:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(0, 255, 136, .4);
-    }
-
-    #explore-btn {
-      animation: float 3s ease-in-out infinite;
-    }
-
-    /* Enhanced Responsive Styles */
-    @media (max-width: 640px) {
-
-      .program-card:hover,
-      .facility-card:hover,
-      .faculty-card:hover {
-        transform: translateY(-8px) scale(1.02);
-      }
-    }
-
-    /* Ripple Animation */
-    @keyframes ripple {
-      to {
-        transform: scale(4);
-        opacity: 0;
-      }
-    }
-
-    @media (max-width: 480px) {
-      section {
-        padding-left: 1rem;
-        padding-right: 1rem;
-      }
+    #star-canvas {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
     }
   </style>
 </head>
 
-<body class="bg-gradient-to-br from-dark via-primary to-dark text-white">
+<body class="bg-dark text-white font-sans selection:bg-accent selection:text-dark">
 
-  <!-- ================= NAV ================= -->
+  <div class="mesh-bg">
+    <div class="mesh-blob animate-mesh bg-primary" style="top: -10%; left: -10%;"></div>
+    <div class="mesh-blob animate-mesh bg-fullstack" style="bottom: -10%; right: -10%; animation-delay: -5s;"></div>
+    <div class="mesh-blob animate-mesh bg-accent opacity-20" style="top: 40%; left: 30%; animation-delay: -10s;"></div>
+  </div>
+  <canvas id="star-canvas"></canvas>
+
   <nav class="fixed top-0 w-full z-50 glass">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <span class="text-2xl font-bold gradient-text">TechForge</span>
+      <span class="text-xl sm:text-2xl font-bold gradient-text tracking-tighter">TechForge</span>
 
-      <div class="hidden md:flex gap-8 font-medium">
-        <a href="#home" class="hover:text-accent transition">Home</a>
-        <a href="#about" class="hover:text-accent transition">About</a>
-        <a href="#programs" class="hover:text-accent transition">Programs</a>
-        <a href="#campus" class="hover:text-accent transition">Campus</a>
-        <a href="#contact" class="hover:text-accent transition">Contact</a>
+      <div class="hidden md:flex gap-8 font-medium items-center">
+        <a href="#home" class="hover:text-accent transition text-sm">Home</a>
+        <a href="#about" class="hover:text-accent transition text-sm">About</a>
+        <a href="#programs" class="hover:text-accent transition text-sm">Programs</a>
+        <a href="#campus" class="hover:text-accent transition text-sm">Campus</a>
+        <button onclick="togglePortal()" id="nav-portal-btn" class="bg-accent/10 text-accent border border-accent/20 px-4 py-1.5 rounded-lg hover:bg-accent hover:text-dark transition-all duration-300 text-sm font-bold">Student Portal</button>
       </div>
 
-      <button id="mobile-btn" class="md:hidden">
-        <i class="fas fa-bars text-xl"></i>
-      </button>
+      <button id="mobile-btn" class="md:hidden p-2"><i class="fas fa-bars text-xl"></i></button>
     </div>
-
-    <div id="mobile-menu" class="hidden glass px-6 py-4 space-y-3">
-      <a href="#home" class="block">Home</a>
-      <a href="#about" class="block">About</a>
-      <a href="#programs" class="block">Programs</a>
-      <a href="#campus" class="block">Campus</a>
-      <a href="#contact" class="block">Contact</a>
+    
+    <div id="mobile-menu" class="hidden glass md:hidden px-6 py-4 space-y-4 border-t border-white/10">
+      <a href="#home" class="block text-sm" onclick="closeMobileMenu()">Home</a>
+      <a href="#about" class="block text-sm" onclick="closeMobileMenu()">About</a>
+      <a href="#programs" class="block text-sm" onclick="closeMobileMenu()">Programs</a>
+      <button onclick="togglePortal(); closeMobileMenu()" class="w-full text-left text-accent text-sm font-bold">Student Portal</button>
     </div>
   </nav>
 
-  <!-- ================= HERO ================= -->
-  <section id="home" class="h-screen flex items-center justify-center relative overflow-hidden">
-    <div class="absolute inset-0 bg-black/50"></div>
-
-    <!-- Floating Blobs -->
-    <div
-      class="absolute w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 bg-accent/20 blur-3xl rounded-full top-10 sm:top-20 left-5 sm:left-20 animate-float">
-    </div>
-    <div
-      class="absolute w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-ai/20 blur-3xl rounded-full bottom-10 sm:bottom-20 right-5 sm:right-20 animate-float">
-    </div>
-
-    <div class="relative z-10 text-center px-4 sm:px-6 fade-up">
-      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6">
-        Forge Your <span class="gradient-text">Future</span><br>in Tech
+  <section id="home" class="h-screen flex items-center justify-center relative overflow-hidden px-4">
+    <div class="relative z-10 text-center fade-up">
+      <div class="inline-block px-4 py-1 rounded-full border border-accent/30 bg-accent/5 text-accent text-xs font-bold mb-6 tracking-widest uppercase floating-text-slow">Protocol: Active</div>
+      <h1 class="text-5xl sm:text-7xl lg:text-8xl font-black mb-6 tracking-tighter leading-none floating-text-slow">
+        Forge Your <br><span class="gradient-text">Future</span>
       </h1>
-      <p class="text-base sm:text-lg md:text-xl text-gray-200 mb-6 sm:mb-8 md:mb-10 px-2">
-        6 Elite Programs • Job Guaranteed • Industry Mentors
+      <p class="text-lg sm:text-xl text-gray-400 mb-10 max-w-2xl mx-auto floating-text-slow">
+        Elite technical education and automated curriculum sync for the next era of creators.
       </p>
-      <button id="explore-btn"
-        class="bg-accent text-dark px-6 sm:px-8 md:px-10 py-3 sm:py-4 rounded-full font-bold btn-glow transition text-sm sm:text-base">
-        Explore Programs
-      </button>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button id="explore-btn" class="bg-accent text-dark px-10 py-4 rounded-full font-black btn-glow transition uppercase tracking-tighter">Explore Programs</button>
+      </div>
     </div>
   </section>
 
-  <!-- ================= ABOUT ================= -->
-  <section id="about" class="py-12 sm:py-16 md:py-24 px-4 sm:px-6">
-    <div class="max-w-6xl mx-auto text-center fade-up">
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text mb-6 sm:mb-8 md:mb-12">About Us</h2>
-      <p class="text-base sm:text-lg text-gray-300 leading-relaxed">
-        TechForge Academy empowers future engineers through hands-on learning,
-        real industry projects, and guaranteed career pathways.
+  <section id="about" class="py-24 px-6 relative">
+    <div class="max-w-4xl mx-auto text-center fade-up">
+      <h2 class="text-3xl md:text-5xl font-bold gradient-text mb-8 floating-text-slow">Engineering Excellence</h2>
+      <p class="text-lg md:text-xl text-gray-400 leading-relaxed">
+        We replace legacy lectures with immersive, project-driven workflows used by industry leaders. Our ecosystem is built to turn potential into precision.
       </p>
     </div>
   </section>
 
-  <!-- ================= PROGRAMS ================= -->
-  <section id="programs" class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 bg-dark/40">
+  <section id="programs" class="py-24 px-6 relative">
     <div class="max-w-7xl mx-auto">
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-center gradient-text mb-8 sm:mb-12 md:mb-16 fade-up">
-        Programs</h2>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-        <div class="program-card glass p-6 sm:p-8 rounded-3xl fade-up">
-          <i class="fas fa-brain text-4xl sm:text-5xl text-ai mb-4"></i>
-          <h3 class="text-xl sm:text-2xl font-bold mb-2">Artificial Intelligence</h3>
-          <p class="opacity-80 mb-4 sm:mb-6 text-sm sm:text-base">Deep Learning • Research • Capstone</p>
-          <button onclick="openEnroll('AI')"
-            class="bg-ai w-full py-2.5 sm:py-3 rounded-full font-bold btn-glow text-sm sm:text-base">
-            Apply Now
-          </button>
+      <h2 class="text-4xl md:text-6xl font-black gradient-text mb-16 text-center floating-text-slow">Programs</h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="program-card glass p-8 rounded-[2.5rem] flex flex-col justify-between" onclick="triggerSplash(this, 'AI')">
+          <div class="splash-ring"></div>
+          <div>
+            <div class="w-16 h-16 bg-ai/10 rounded-2xl flex items-center justify-center mb-6 animate-float">
+                <i class="fas fa-brain text-ai text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">AI Mastery</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">LLMs and Neural Architecture design.</p>
+          </div>
+          <button class="w-full bg-ai py-4 rounded-2xl mt-8 text-dark font-black uppercase tracking-tighter text-sm">Apply Now</button>
         </div>
 
-        <div class="program-card glass p-6 sm:p-8 rounded-3xl fade-up">
-          <i class="fas fa-shield-alt text-4xl sm:text-5xl text-cyber mb-4"></i>
-          <h3 class="text-xl sm:text-2xl font-bold mb-2">Cybersecurity</h3>
-          <p class="opacity-80 mb-4 sm:mb-6 text-sm sm:text-base">Ethical Hacking • SOC • Certifications</p>
-          <button onclick="openEnroll('Cybersecurity')"
-            class="bg-cyber w-full py-2.5 sm:py-3 rounded-full font-bold btn-glow text-sm sm:text-base">
-            Apply Now
-          </button>
+        <div class="program-card glass p-8 rounded-[2.5rem] flex flex-col justify-between" onclick="triggerSplash(this, 'Cybersecurity')">
+          <div class="splash-ring"></div>
+          <div>
+            <div class="w-16 h-16 bg-cyber/10 rounded-2xl flex items-center justify-center mb-6 animate-float">
+                <i class="fas fa-shield-alt text-cyber text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Cybersecurity</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Offensive Security and Zero Trust.</p>
+          </div>
+          <button class="w-full bg-cyber py-4 rounded-2xl mt-8 font-black text-sm uppercase tracking-tighter text-white">Apply Now</button>
         </div>
 
-        <div class="program-card glass p-6 sm:p-8 rounded-3xl fade-up sm:col-span-2 lg:col-span-1">
-          <i class="fas fa-code text-4xl sm:text-5xl text-fullstack mb-4"></i>
-          <h3 class="text-xl sm:text-2xl font-bold mb-2">Full-Stack Web</h3>
-          <p class="opacity-80 mb-4 sm:mb-6 text-sm sm:text-base">React • Node • AWS</p>
-          <button onclick="openEnroll('Full-Stack')"
-            class="bg-fullstack w-full py-2.5 sm:py-3 rounded-full font-bold btn-glow text-sm sm:text-base">
-            Apply Now
-          </button>
+        <div class="program-card glass p-8 rounded-[2.5rem] flex flex-col justify-between" onclick="triggerSplash(this, 'Full-Stack')">
+          <div class="splash-ring"></div>
+          <div>
+            <div class="w-16 h-16 bg-fullstack/10 rounded-2xl flex items-center justify-center mb-6 animate-float">
+                <i class="fas fa-code text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Full-Stack Dev</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Next.js and Scalable Microservices.</p>
+          </div>
+          <button class="w-full bg-fullstack py-4 rounded-2xl mt-8 font-black text-sm uppercase tracking-tighter text-white">Apply Now</button>
+        </div>
+
+        <div class="program-card glass p-8 rounded-[2.5rem] flex flex-col justify-between" onclick="triggerSplash(this, 'Data Science')">
+          <div class="splash-ring"></div>
+          <div>
+            <div class="w-16 h-16 bg-data/10 rounded-2xl flex items-center justify-center mb-6 animate-float">
+                <i class="fas fa-chart-line text-data text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Data Science</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Big Data and Predictive Analytics.</p>
+          </div>
+          <button class="w-full bg-data py-4 rounded-2xl mt-8 text-dark font-black uppercase tracking-tighter text-sm">Apply Now</button>
+        </div>
+
+        <div class="program-card glass p-8 rounded-[2.5rem] flex flex-col justify-between" onclick="triggerSplash(this, 'Cloud')">
+          <div class="splash-ring"></div>
+          <div>
+            <div class="w-16 h-16 bg-cloud/10 rounded-2xl flex items-center justify-center mb-6 animate-float">
+                <i class="fas fa-cloud text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Cloud Systems</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Kubernetes and Multi-cloud strategy.</p>
+          </div>
+          <button class="w-full bg-cloud py-4 rounded-2xl mt-8 font-black text-sm uppercase tracking-tighter text-white">Apply Now</button>
+        </div>
+
+        <div class="program-card glass p-8 rounded-[2.5rem] flex flex-col justify-between" onclick="triggerSplash(this, 'Software')">
+          <div class="splash-ring"></div>
+          <div>
+            <div class="w-16 h-16 bg-software/10 rounded-2xl flex items-center justify-center mb-6 animate-float">
+                <i class="fas fa-laptop-code text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Software Systems</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Low-level systems and Rust dev.</p>
+          </div>
+          <button class="w-full bg-software py-4 rounded-2xl mt-8 font-black text-sm uppercase tracking-tighter text-white">Apply Now</button>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ================= CAMPUS ================= -->
-  <section id="campus" class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 fade-up">
-    <div class="max-w-6xl mx-auto text-center">
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text mb-8 sm:mb-12 md:mb-16">Campus Life</h2>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-        <div class="facility-card glass p-6 sm:p-8 rounded-2xl animate-float">
-          <i class="fas fa-microchip text-4xl sm:text-5xl text-accent mb-3 sm:mb-4"></i>
-          <h3 class="font-bold text-lg sm:text-xl">AI Labs</h3>
-        </div>
-        <div class="facility-card glass p-6 sm:p-8 rounded-2xl animate-float">
-          <i class="fas fa-dumbbell text-4xl sm:text-5xl text-accent mb-3 sm:mb-4"></i>
-          <h3 class="font-bold text-lg sm:text-xl">Wellness Center</h3>
-        </div>
-        <div class="facility-card glass p-6 sm:p-8 rounded-2xl animate-float sm:col-span-2 md:col-span-1">
-          <i class="fas fa-utensils text-4xl sm:text-5xl text-accent mb-3 sm:mb-4"></i>
-          <h3 class="font-bold text-lg sm:text-xl">Cafeteria</h3>
-        </div>
+  <section id="campus" class="py-24 px-6 text-center">
+    <h2 class="text-4xl md:text-6xl font-black gradient-text mb-16 floating-text-slow">The Ecosystem</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div class="glass p-10 rounded-[2.5rem] animate-float">
+        <div class="text-accent text-5xl mb-6"><i class="fas fa-microchip"></i></div>
+        <h3 class="text-xl font-bold uppercase tracking-widest">Compute Lab</h3>
+      </div>
+      <div class="glass p-10 rounded-[2.5rem] animate-float" style="animation-delay: 0.2s">
+        <div class="text-accent text-5xl mb-6"><i class="fas fa-spa"></i></div>
+        <h3 class="text-xl font-bold uppercase tracking-widest">Flow Zone</h3>
+      </div>
+      <div class="glass p-10 rounded-[2.5rem] animate-float" style="animation-delay: 0.4s">
+        <div class="text-accent text-5xl mb-6"><i class="fas fa-terminal"></i></div>
+        <h3 class="text-xl font-bold uppercase tracking-widest">The Core Café</h3>
       </div>
     </div>
   </section>
 
-  <!-- ================= CONTACT ================= -->
-  <section id="contact" class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 bg-dark/40 fade-up">
-    <div class="max-w-xl mx-auto glass p-5 sm:p-8 rounded-2xl">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-4 sm:mb-6 text-center">Contact Us</h2>
-
-      <form class="space-y-3 sm:space-y-4">
-        <input type="text" placeholder="Name"
-          class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-white/10 text-sm sm:text-base">
-        <input type="email" placeholder="Email"
-          class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-white/10 text-sm sm:text-base">
-        <textarea rows="4" placeholder="Message"
-          class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-white/10 text-sm sm:text-base"></textarea>
-        <button class="w-full bg-accent text-dark py-2.5 sm:py-3 rounded-full font-bold btn-glow text-sm sm:text-base">
-          Send Message
-        </button>
+  <section id="contact" class="py-24 px-6">
+    <div class="max-w-xl mx-auto glass p-10 rounded-[3rem]">
+      <h2 class="text-center text-4xl font-black gradient-text mb-8 floating-text-slow">Initialize Transmission</h2>
+      <form class="space-y-6" onsubmit="event.preventDefault(); alert('Transmission Received!')">
+        <input type="text" placeholder="Alias" class="w-full p-5 bg-white/5 border border-white/10 rounded-2xl focus:border-accent text-sm" required>
+        <textarea placeholder="Message" class="w-full p-5 bg-white/5 border border-white/10 rounded-2xl focus:border-accent h-40 text-sm" required></textarea>
+        <button type="submit" class="w-full bg-accent text-dark p-5 rounded-full font-black uppercase tracking-widest btn-glow transition">Send</button>
       </form>
     </div>
   </section>
 
-  <!-- ================= MODAL ================= -->
-  <div id="enroll-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 p-4">
-    <div class="glass p-5 sm:p-8 rounded-3xl max-w-md w-full animate-fadeUp mx-4">
-      <h3 class="text-xl sm:text-2xl font-bold mb-4">
-        Apply to <span id="program-name" class="gradient-text"></span>
-      </h3>
-      <button onclick="closeEnroll()"
-        class="mt-4 sm:mt-6 w-full bg-accent text-dark py-2.5 sm:py-3 rounded-full font-bold text-sm sm:text-base">
-        Close
-      </button>
+  <div id="student-portal" class="fixed inset-0 z-[60] bg-[#050b18] hidden flex-col overflow-y-auto">
+    <header class="sticky top-0 z-20 glass border-b border-white/10 px-4 sm:px-8 py-5">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-5">
+                <div class="w-14 h-14 rounded-2xl bg-accent/20 flex items-center justify-center text-accent shadow-[0_0_20px_rgba(0,255,136,0.3)]">
+                  <i class="fas fa-user-secret text-2xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold">Hi, <span id="portal-user-name" class="text-accent">User</span></h2>
+                    <p id="portal-user-email" class="text-xs opacity-40 font-mono"></p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="logoutPortal()" class="text-xs font-black uppercase tracking-widest text-red-500 bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20">Sign Out</button>
+                <button onclick="togglePortal()" class="bg-white/10 hover:bg-white/20 p-3 rounded-full"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto w-full p-6 sm:p-12">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div class="glass p-8 rounded-3xl border-l-4 border-accent animate-float">
+              <span class="text-[10px] opacity-40 uppercase font-black mb-2 block tracking-widest">Nodes</span>
+              <h4 id="course-count" class="text-4xl font-black">0</h4>
+          </div>
+          <div class="glass p-8 rounded-3xl border-l-4 border-ai animate-float" style="animation-delay: 0.1s">
+              <span class="text-[10px] opacity-40 uppercase font-black mb-2 block tracking-widest">GPA</span>
+              <h4 class="text-4xl font-black text-ai">3.9</h4>
+          </div>
+          <div class="glass p-8 rounded-3xl border-l-4 border-fullstack animate-float" style="animation-delay: 0.2s">
+              <span class="text-[10px] opacity-40 uppercase font-black mb-2 block tracking-widest">Attendance</span>
+              <h4 class="text-4xl font-black text-fullstack">98%</h4>
+          </div>
+          <div class="glass p-8 rounded-3xl border-l-4 border-cyber animate-float" style="animation-delay: 0.3s">
+              <span class="text-[10px] opacity-40 uppercase font-black mb-2 block tracking-widest">Status</span>
+              <h4 class="text-4xl font-black text-cyber">Pro</h4>
+          </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div class="lg:col-span-2">
+              <h3 class="text-2xl font-black mb-8 flex items-center gap-4 floating-text-slow">
+                <i class="fas fa-project-diagram text-accent"></i> Curriculum Sync
+              </h3>
+              <div id="schedule-list" class="space-y-8"></div>
+          </div>
+          <aside class="space-y-8">
+              <div class="glass p-8 rounded-[2.5rem]">
+                  <h4 class="font-bold mb-6 text-sm uppercase tracking-widest">Board</h4>
+                  <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+                      <p class="text-xs font-bold text-accent">Hackathon 2026</p>
+                      <p class="text-[11px] opacity-40 mt-1">Join the sync at terminal B.</p>
+                  </div>
+              </div>
+          </aside>
+      </div>
+    </main>
+  </div>
+
+  <div id="enroll-modal" class="fixed inset-0 bg-black/95 hidden items-center justify-center z-[100] p-4 backdrop-blur-xl">
+    <div class="glass p-10 rounded-[3rem] max-w-md w-full animate-fadeUp">
+      <div class="text-center mb-8">
+          <div class="w-20 h-20 bg-accent/20 rounded-3xl flex items-center justify-center mx-auto mb-6 text-accent text-3xl shadow-[0_0_30px_rgba(0,255,136,0.2)]">
+            <i class="fas fa-fingerprint"></i>
+          </div>
+          <h3 class="text-3xl font-black mb-2 uppercase">Sync <span id="modal-program-name" class="gradient-text">Program</span></h3>
+          <p class="text-xs opacity-40">Identify your biometric credentials.</p>
+      </div>
+      <form id="enrollment-form" class="space-y-6">
+        <input type="hidden" id="hidden-program-name">
+        <input type="text" id="student-name" required placeholder="Full Name" class="w-full p-5 rounded-2xl bg-white/5 border border-white/10 text-sm focus:border-accent">
+        <input type="email" id="student-email" required placeholder="Email Address" class="w-full p-5 rounded-2xl bg-white/5 border border-white/10 text-sm focus:border-accent">
+        <button type="submit" class="w-full bg-accent text-dark py-5 rounded-full font-black text-sm uppercase tracking-widest btn-glow">Confirm Sync</button>
+      </form>
+      <button onclick="closeEnroll()" class="w-full mt-8 text-[11px] opacity-30 hover:opacity-100 uppercase tracking-widest">Abort</button>
     </div>
   </div>
 
   <script>
-    // Mobile Menu Toggle with Animation
-    const mobileBtn = document.getElementById('mobile-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    let menuOpen = false;
+    // --- PARTICLE NEBULA SYSTEM ---
+    const canvas = document.getElementById('star-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    let mouse = { x: null, y: null };
 
-    mobileBtn.onclick = () => {
-      menuOpen = !menuOpen;
-      mobileMenu.classList.toggle('hidden');
-      mobileBtn.innerHTML = menuOpen
-        ? '<i class="fas fa-times text-xl"></i>'
-        : '<i class="fas fa-bars text-xl"></i>';
-    };
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    resize();
 
-    // Close mobile menu when clicking a link
-    mobileMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileMenu.classList.add('hidden');
-        menuOpen = false;
-        mobileBtn.innerHTML = '<i class="fas fa-bars text-xl"></i>';
-      });
-    });
+    class Star {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2;
+        this.baseX = this.x; this.baseY = this.y;
+        this.density = (Math.random() * 30) + 1;
+      }
+      draw() {
+        ctx.fillStyle = 'rgba(0, 255, 136, 0.4)';
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+      }
+      update() {
+        let dx = mouse.x - this.x;
+        let dy = mouse.y - this.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        let maxDistance = 120;
+        if (distance < maxDistance) {
+          let force = (maxDistance - distance) / maxDistance;
+          this.x -= (dx / distance) * force * this.density;
+          this.y -= (dy / distance) * force * this.density;
+        } else {
+          if (this.x !== this.baseX) this.x -= (this.x - this.baseX) / 10;
+          if (this.y !== this.baseY) this.y -= (this.y - this.baseY) / 10;
+        }
+      }
+    }
 
-    // Modal Functions
-    const modal = document.getElementById('enroll-modal');
-    const programName = document.getElementById('program-name');
+    function initStars() { stars = []; for (let i = 0; i < 150; i++) stars.push(new Star()); }
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(s => { s.update(); s.draw(); });
+      requestAnimationFrame(animate);
+    }
+    window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+    initStars(); animate();
+
+    // --- MIRROR INTERACTION LOGIC ---
+    function triggerSplash(card, program) {
+      card.classList.add('clicked');
+      setTimeout(() => {
+        card.classList.remove('clicked');
+        openEnroll(program);
+      }, 700);
+    }
+
+    // --- PORTAL & LOGIC ---
+    const scheduleData = { 'AI': 'Mon-Wed | 09:00', 'Cybersecurity': 'Tue-Thu | 14:00', 'Full-Stack': 'Mon-Fri | 18:00', 'Data Science': 'Sat | 10:00', 'Cloud': 'Wed | 09:00', 'Software': 'Fri | 13:00' };
+    let loggedInUserEmail = localStorage.getItem('activeUserSessionEmail') || null;
+
+    function togglePortal() {
+      if(!loggedInUserEmail) {
+        let email = prompt("Identification Required (Email):");
+        if(email) {
+          email = email.trim().toLowerCase();
+          const students = JSON.parse(localStorage.getItem('TF_Master_Data')) || {};
+          if(students[email]) {
+            loggedInUserEmail = email;
+            localStorage.setItem('activeUserSessionEmail', email);
+            updateNavBtn();
+          } else { alert("Node not found."); return; }
+        } else return;
+      }
+      const portal = document.getElementById('student-portal');
+      portal.classList.toggle('hidden'); portal.classList.toggle('flex');
+      document.body.style.overflow = portal.classList.contains('hidden') ? 'auto' : 'hidden';
+      renderSchedule();
+    }
 
     function openEnroll(name) {
-      programName.textContent = name;
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      document.getElementById('modal-program-name').textContent = name;
+      document.getElementById('hidden-program-name').value = name;
+      document.getElementById('enroll-modal').classList.replace('hidden', 'flex');
       document.body.style.overflow = 'hidden';
     }
 
-    function closeEnroll() {
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-      document.body.style.overflow = 'auto';
-    }
+    function closeEnroll() { document.getElementById('enroll-modal').classList.replace('flex', 'hidden'); document.body.style.overflow = 'auto'; }
 
-    // Close modal on backdrop click
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeEnroll();
-    });
-
-    // Escape key closes modal
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeEnroll();
-    });
-
-    // Scroll-triggered Animations with Intersection Observer
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
+    document.getElementById('enrollment-form').onsubmit = (e) => {
+      e.preventDefault();
+      const prog = document.getElementById('hidden-program-name').value;
+      const name = document.getElementById('student-name').value.trim();
+      const email = document.getElementById('student-email').value.trim().toLowerCase();
+      
+      let students = JSON.parse(localStorage.getItem('TF_Master_Data')) || {};
+      if(!students[email]) students[email] = { name: name, courses: [] };
+      if(!students[email].courses.includes(prog)) students[email].courses.push(prog);
+      
+      localStorage.setItem('TF_Master_Data', JSON.stringify(students));
+      localStorage.setItem('activeUserSessionEmail', email);
+      loggedInUserEmail = email;
+      closeEnroll(); togglePortal(); updateNavBtn();
     };
 
-    const animateOnScroll = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-in');
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
+    function renderSchedule() {
+      if(!loggedInUserEmail) return;
+      const students = JSON.parse(localStorage.getItem('TF_Master_Data')) || {};
+      const userData = students[loggedInUserEmail];
+      if(!userData) return;
+      document.getElementById('portal-user-name').textContent = userData.name;
+      document.getElementById('portal-user-email').textContent = loggedInUserEmail;
+      document.getElementById('course-count').textContent = userData.courses.length;
+      
+      const list = document.getElementById('schedule-list');
+      list.innerHTML = userData.courses.map(c => `
+        <div class="glass p-8 rounded-[3rem] border border-white/5 border-l-4 border-accent">
+            <h4 class="text-3xl font-black">${c}</h4>
+            <p class="text-xs opacity-50 mt-2 font-mono uppercase tracking-widest"><i class="fas fa-terminal text-accent"></i> Sync_Time: ${scheduleData[c]}</p>
+        </div>
+      `).join('') || `<div class="text-center py-20 opacity-30">No Active Sync Nodes.</div>`;
+    }
 
-    // Apply scroll animations to cards
-    document.querySelectorAll('.program-card, .facility-card').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(30px)';
-      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      animateOnScroll.observe(el);
-    });
+    function logoutPortal() { localStorage.removeItem('activeUserSessionEmail'); location.reload(); }
+    
+    function updateNavBtn() {
+      const btn = document.getElementById('nav-portal-btn');
+      if(loggedInUserEmail) {
+        const students = JSON.parse(localStorage.getItem('TF_Master_Data')) || {};
+        btn.innerHTML = `<i class="fas fa-satellite mr-2"></i> ${students[loggedInUserEmail].name.split(' ')[0]}`;
+      } else { btn.innerHTML = "Student Portal"; }
+    }
 
-    // Navbar background on scroll
-    const nav = document.querySelector('nav');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 50) {
-        nav.style.background = 'rgba(15, 23, 42, 0.95)';
-        nav.style.boxShadow = '0 4px 30px rgba(0,0,0,0.3)';
-      } else {
-        nav.style.background = 'rgba(255,255,255,0.08)';
-        nav.style.boxShadow = 'none';
-      }
-    });
-
-    // Smooth scroll for explore button
-    document.getElementById('explore-btn').addEventListener('click', () => {
-      document.getElementById('programs').scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    });
-
-    // Add ripple effect to buttons
-    document.querySelectorAll('button').forEach(button => {
-      button.addEventListener('click', function (e) {
-        const ripple = document.createElement('span');
-        const rect = this.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e.clientX - rect.left - size / 2;
-        const y = e.clientY - rect.top - size / 2;
-
-        ripple.style.cssText = `
-          position: absolute;
-          width: ${size}px;
-          height: ${size}px;
-          left: ${x}px;
-          top: ${y}px;
-          background: rgba(255,255,255,0.3);
-          border-radius: 50%;
-          transform: scale(0);
-          animation: ripple 0.6s ease-out;
-          pointer-events: none;
-        `;
-
-        this.style.position = 'relative';
-        this.style.overflow = 'hidden';
-        this.appendChild(ripple);
-
-        setTimeout(() => ripple.remove(), 600);
-      });
-    });
-
-    // Parallax effect on floating blobs
-    document.addEventListener('mousemove', (e) => {
-      const blobs = document.querySelectorAll('#home .animate-float');
-      const x = (e.clientX / window.innerWidth - 0.5) * 30;
-      const y = (e.clientY / window.innerHeight - 0.5) * 30;
-
-      blobs.forEach((blob, i) => {
-        const speed = (i + 1) * 0.5;
-        blob.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
-      });
-    });
-
-    // Active nav link highlight on scroll
-    const sections = document.querySelectorAll('section[id]');
-    window.addEventListener('scroll', () => {
-      let current = '';
-      sections.forEach(section => {
-        const sectionTop = section.offsetTop - 100;
-        if (scrollY >= sectionTop) {
-          current = section.getAttribute('id');
-        }
-      });
-
-      document.querySelectorAll('nav a[href^="#"]').forEach(link => {
-        link.classList.remove('text-accent');
-        if (link.getAttribute('href') === `#${current}`) {
-          link.classList.add('text-accent');
-        }
-      });
-    });
-
-    // Form submission with feedback
-    document.querySelector('form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const btn = e.target.querySelector('button');
-      const originalText = btn.textContent;
-      btn.textContent = 'Sending...';
-      btn.disabled = true;
-
-      setTimeout(() => {
-        btn.textContent = 'Message Sent! ✓';
-        btn.style.background = '#10b981';
-        setTimeout(() => {
-          btn.textContent = originalText;
-          btn.style.background = '';
-          btn.disabled = false;
-          e.target.reset();
-        }, 2000);
-      }, 1000);
-    });
+    function closeMobileMenu() { document.getElementById('mobile-menu').classList.add('hidden'); }
+    document.getElementById('mobile-btn').onclick = () => document.getElementById('mobile-menu').classList.toggle('hidden');
+    document.getElementById('explore-btn').onclick = () => document.getElementById('programs').scrollIntoView({ behavior: 'smooth' });
+    window.onload = updateNavBtn;
   </script>
-
 </body>
-
 </html>
